@@ -65,13 +65,13 @@ export default function QrPanel({ secret }) {
         <label htmlFor={issuerId} className="field-label">
           Issuer
         </label>
-        <input id={issuerId} value={state.issuer} onChange={(event) => dispatch({ type: 'qr/issuer', value: event.target.value })} />
+        <input id={issuerId} placeholder="TOTP Visualizer" value={state.issuer} onChange={(event) => dispatch({ type: 'qr/issuer', value: event.target.value })} />
       </div>
       <div className="field">
         <label htmlFor={accountId} className="field-label">
           Account name
         </label>
-        <input id={accountId} value={state.account} onChange={(event) => dispatch({ type: 'qr/account', value: event.target.value })} />
+        <input id={accountId} placeholder="student@example.com" value={state.account} onChange={(event) => dispatch({ type: 'qr/account', value: event.target.value })} />
       </div>
 
       {secret.ok ? (

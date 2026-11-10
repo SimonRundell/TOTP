@@ -2,6 +2,7 @@ import { useId, useRef, useState } from 'react';
 import { useRingDrag } from '../hooks/useRingDrag.js';
 import { formatOffset, groupCode, toLocalInputValue } from '../lib/format.js';
 import { polarPoint, stepFraction } from '../lib/ringMath.js';
+import { MAX_UNIX_SECONDS } from '../lib/totp.js';
 import { useAppState } from '../state/AppContext.jsx';
 
 const SIZE = 400;
@@ -68,6 +69,10 @@ function ScrubControls({ realMs, timeMs }) {
   const jumpTo = (ms) => {
     if (!Number.isFinite(ms)) {
       setJumpError('That is not a time I can use.');
+      return;
+    }
+    if (Math.abs(ms) > MAX_UNIX_SECONDS * 1000) {
+      setJumpError('That is too far away. Dates stop at about 273,000 years from 1970.');
       return;
     }
     setJumpError(ms < state.t0 * 1000 ? `That is before T0 (${state.t0}), so the clock stops at T0 instead.` : '');
@@ -258,7 +263,7 @@ export default function ClockRing({ timeMs, realMs, step, code, announcedCode })
         </text>
       </svg>
       <p className="sr-only" aria-live="polite">
-        {announcedCode ? `Current code ${announcedCode.split('').join(' ')}` : ''}
+        {announcedCode && !isDragging ? `Current code ${announcedCode.split('').join(' ')}` : ''}
       </p>
       <ScrubControls realMs={realMs} timeMs={timeMs} />
     </section>

@@ -9,7 +9,7 @@ An interactive 2D visualizer for Time-based One-Time Passwords (RFC 6238).
 | Stack | Vite + React + JavaScript, client-only |
 | Licence | Creative Commons BY-NC-SA 4.0 International |
 | Audience | 16-19 Further Education students (NCFE Level 2, BTEC Level 3, T Level) and their teachers |
-| Status | Design brief for a Claude Code agent. Nothing has been built yet. |
+| Status | Built. This brief is kept as the original specification. |
 
 ---
 
@@ -62,7 +62,7 @@ These were settled with the author before this brief was written. Do not revisit
 7. Local development uses the Vite dev server only. There is no PHP in this project, so Laragon is not involved. If port 5173 is already in use, assume an instance is already running and test against that. Do not kill the process.
 8. Shell examples in the README use PowerShell syntax.
 9. Spelling in user-facing text is UK English, apart from the product name. Use "program" for code.
-10. Do not mention any private company in code, comments, README or UI. Attribution is to Simon Rundell only.
+10. Do not mention any private company in code, comments, README or UI. Attribution is to Simon Rundell only. Update: the author has since added the Exeter College badge (`CMFloatAd.jsx`), which is a deliberate exception.
 11. User-facing copy should read like a person wrote it. Mixed sentence lengths, no em-dashes, no marketing language.
 
 ### A note on `.config.json`
@@ -146,7 +146,7 @@ The last row uses a time beyond 32 bits. The app must handle it.
 
 Runtime: `react`, `react-dom`, `qrcode.react`. Nothing else.
 
-Dev: `vite`, `@vitejs/plugin-react`, `vitest`, `@testing-library/react`, `jsdom`, `eslint` as supplied by the template.
+Dev: `vite`, `@vitejs/plugin-react`, `vitest`, `@testing-library/react`, `jsdom`. Linting uses `oxlint`, which is what react-doctor works with.
 
 No Axios, no router, no state library, no animation library. CSS transitions and `requestAnimationFrame` are enough.
 
@@ -201,8 +201,8 @@ totp-visualizer/
         ├── SettingsPanel.jsx
         ├── TestVectorsPanel.jsx
         ├── QrPanel.jsx
-        ├── StepController.jsx
-        └── Caption.jsx
+        ├── TeachingCard.jsx    # replaced StepController and Caption; always visible
+        └── CMFloatAd.jsx       # self-contained branding badge, dropped in as supplied
 ```
 
 ### 5.3 Library layer

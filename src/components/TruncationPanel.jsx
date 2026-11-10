@@ -36,6 +36,7 @@ function TruncationPanel({ trace, radix, pending }) {
   }
 
   const { lastByte, offset, windowBytes, maskedFirstByte, maskChangedByte, binaryCode } = trace;
+  /** Formats a byte as two hex digits. */
   const hex = (value) => formatByte(value, 'hex');
   const maskedHex = `0x${hex(maskedFirstByte)}${Array.from(windowBytes.slice(1), hex).join('')}`;
   const [, lowNibble] = nibbleBits(lastByte);

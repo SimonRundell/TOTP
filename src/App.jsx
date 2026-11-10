@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useEffectEvent, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useMemo, useReducer, useRef, useState } from 'react';
 import ClockRing from './components/ClockRing.jsx';
+import CMFloatAd from './components/CMFloatAd.jsx';
 import CodeDisplay from './components/CodeDisplay.jsx';
 import CounterPanel from './components/CounterPanel.jsx';
 import DigestGrid from './components/DigestGrid.jsx';
@@ -7,7 +8,7 @@ import Header from './components/Header.jsx';
 import QrPanel from './components/QrPanel.jsx';
 import SecretPanel from './components/SecretPanel.jsx';
 import SettingsPanel from './components/SettingsPanel.jsx';
-import StepController from './components/StepController.jsx';
+import TeachingCard from './components/TeachingCard.jsx';
 import TestVectorsPanel from './components/TestVectorsPanel.jsx';
 import TruncationPanel from './components/TruncationPanel.jsx';
 import VerificationWindow from './components/VerificationWindow.jsx';
@@ -45,24 +46,37 @@ function Drawer({ open, onClose, timeMs, secret }) {
     if (event.key === 'Escape') onClose();
   });
 
+  const closeRef = useRef(null);
+
+  // Move focus into the drawer when it opens and hand it back to whatever opened it on close.
+  // The drawer is inert while closed, so focus cannot be left inside it.
   useEffect(() => {
     if (!open) return undefined;
+    const opener = document.activeElement;
+    closeRef.current?.focus();
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (opener instanceof HTMLElement) opener.focus();
+    };
   }, [open]);
 
   return (
-    <aside id="drawer" className={`drawer ${open ? 'is-open' : ''}`} aria-label="Settings and tools" inert={!open}>
+    <>
+      {/* Clicking anywhere outside the open drawer closes it. Escape does the same for keyboards. */}
+      {open ? <div className="drawer-backdrop" aria-hidden="true" onClick={onClose} /> : null}
+      <aside id="drawer" className={`drawer ${open ? 'is-open' : ''}`} aria-label="Settings and tools" inert={!open}>
       <div className="drawer-head">
         <span className="panel-title">Settings and tools</span>
-        <button type="button" onClick={onClose}>
+        <button type="button" ref={closeRef} onClick={onClose}>
           Close
         </button>
       </div>
       <SettingsPanel timeMs={timeMs} />
       <TestVectorsPanel onLoaded={onClose} />
       <QrPanel secret={secret} />
-    </aside>
+      </aside>
+    </>
   );
 }
 
@@ -102,8 +116,9 @@ function Visualizer() {
         <main className="layout">
           <div className="ring-column">
             <ClockRing timeMs={timeMs} realMs={realMs} step={step} code={shownCode} announcedCode={current?.code ?? null} />
-            {state.viewMode === 'steps' ? <StepController /> : null}
           </div>
+
+          <TeachingCard />
 
           <div className="pipeline">
             <SecretPanel secret={secret} radix={state.radix} />
@@ -130,6 +145,7 @@ function Visualizer() {
         </footer>
 
         <Drawer open={drawerOpen} onClose={closeDrawer} timeMs={timeMs} secret={secret} />
+        <CMFloatAd bgColor="#0d1726" color="#d7ecf5" />
       </div>
     </AppContext.Provider>
   );

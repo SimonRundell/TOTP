@@ -1,5 +1,6 @@
 import { defaults } from '../config/defaults.js';
 import { parseShareHash } from '../lib/shareLink.js';
+import { MAX_UNIX_SECONDS } from '../lib/totp.js';
 
 export const RFC_SECRET = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
 export const STEP_COUNT = 5;
@@ -31,14 +32,15 @@ export function createInitialState(hash = '') {
 }
 
 /**
- * Keeps a scrubbed time at or after T0, since earlier times have no counter.
+ * Keeps a scrubbed time at or after T0, since earlier times have no counter, and
+ * at or before the last moment a JavaScript date can represent.
  *
  * @param {number} ms The requested time in milliseconds.
  * @param {number} t0 T0 in seconds.
  * @returns {number} The clamped time.
  */
 function clampToT0(ms, t0) {
-  return Math.max(ms, t0 * 1000);
+  return Math.min(Math.max(ms, t0 * 1000), MAX_UNIX_SECONDS * 1000);
 }
 
 /**
@@ -105,6 +107,9 @@ export function reducer(state, action) {
       return { ...state, timeMode: 'live', scrubTimeMs: null };
 
     case 'view/set':
+      if (action.mode === state.viewMode) {
+        return state;
+      }
       if (action.mode === 'steps') {
         // Freeze time so the values stay still while the teacher talks.
         const frozen = state.timeMode === 'scrubbed' ? state.scrubTimeMs : action.nowMs;

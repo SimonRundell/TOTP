@@ -51,13 +51,14 @@ export function useTotpTrace(key, counter, digits) {
         }
         setResult((prior) => {
           const current = traces[2];
-          const changed = prior.current && !bytesEqual(prior.current.digest, current.digest);
+          const sameKey = prior.key === key;
+          const changed = sameKey && prior.current && !bytesEqual(prior.current.digest, current.digest);
           return {
             key,
             counter,
             digits,
             current,
-            previous: changed ? prior.current : prior.previous,
+            previous: changed ? prior.current : sameKey ? prior.previous : null,
             window: WINDOW_OFFSETS.map((k, i) => ({ k, counter: counter + k, trace: traces[i] })),
             error: null,
           };

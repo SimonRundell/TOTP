@@ -74,6 +74,7 @@ function VerificationWindow({ entries, pending }) {
         </fieldset>
       </div>
 
+      {entries.length === 0 ? <p className="hint">Waiting for a valid secret.</p> : null}
       <ol className={`window-cards ${pending ? 'is-pending' : ''}`}>
         {entries.map(({ k, counter, trace }) => {
           const accepted = Math.abs(k) <= tolerance;

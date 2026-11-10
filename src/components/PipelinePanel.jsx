@@ -12,7 +12,7 @@ import { useAppState } from '../state/AppContext.jsx';
 export default function PipelinePanel({ stage, title, pending = false, children }) {
   const { state } = useAppState();
   const inSteps = state.viewMode === 'steps';
-  const isActive = inSteps && state.stepIndex === stage - 1;
+  const isActive = state.stepIndex === stage - 1;
   const headingId = `stage-${stage}-title`;
   const panelRef = useRef(null);
 

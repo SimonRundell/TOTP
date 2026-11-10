@@ -1,6 +1,12 @@
 import { hotpTrace } from './hotp.js';
 
 /**
+ * The latest Unix time, in seconds, the app will show. JavaScript dates stop at
+ * 8,640,000,000,000 seconds, and anything past that cannot be formatted.
+ */
+export const MAX_UNIX_SECONDS = 8_640_000_000_000;
+
+/**
  * Converts Unix time into the TOTP counter and the position within the current step.
  * Times before T0 have no valid counter. The UI clamps scrubbing so this never happens,
  * and this function returns step 0 rather than a negative counter if it is ever asked.

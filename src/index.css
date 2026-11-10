@@ -217,7 +217,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   flex-direction: column;
   gap: var(--gap);
   min-height: 100vh;
-  padding: 0.75rem var(--gap);
+  /* The bottom padding leaves room so the floating badge never hides the footer. */
+  padding: 0.75rem var(--gap) 4.5rem;
 }
 
 .topbar {
@@ -233,12 +234,21 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 1.1rem;
   font-weight: normal;
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--cyan);
   text-shadow: var(--glow-cyan);
+}
+
+.brand-logo {
+  display: block;
+  height: 1.75rem;
+  width: auto;
 }
 
 .topbar-controls {
@@ -252,6 +262,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   display: grid;
   grid-template-columns: minmax(22rem, 32%) minmax(0, 1fr);
   grid-template-areas:
+    "ring teach"
     "ring pipeline"
     "verify verify";
   gap: var(--gap);
@@ -264,6 +275,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   gap: var(--gap);
   position: sticky;
   top: 0.75rem;
+}
+
+.teaching-card {
+  grid-area: teach;
 }
 
 .pipeline {
@@ -949,32 +964,110 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   color: var(--red);
 }
 
-/* ---------- Step-through ---------- */
+/* ---------- Teaching card ---------- */
 
-.step-controller {
+.teaching-card {
   display: grid;
-  gap: 0.75rem;
-  border-color: var(--cyan);
+  gap: 0.9rem;
+  border-color: var(--cyan-dim);
+  font-size: 1.02rem;
+  min-width: 0;
 }
 
-.caption {
+.overview {
   display: grid;
   gap: 0.5rem;
-  font-size: 1.05rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.overview summary {
+  cursor: pointer;
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.overview[open] summary {
+  margin-bottom: 0.25rem;
+}
+
+.overview .formula {
+  color: var(--amber);
+  overflow-wrap: anywhere;
 }
 
 .caption-title {
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: normal;
   color: var(--text);
 }
 
-.caption-question {
-  color: var(--amber);
+.stage-lesson {
+  display: grid;
+  gap: 0.75rem;
 }
 
-.caption-question .field-label {
+.lesson-columns {
+  display: grid;
+  gap: 1rem 2rem;
+}
+
+.lesson-main,
+.lesson-side {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.lesson-what {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0.25rem 0 0;
+  padding-left: 1.4rem;
+}
+
+.lesson-what li::marker {
+  color: var(--cyan);
+}
+
+.teaching-card .field-label {
   display: block;
+  margin-bottom: 0.15rem;
+}
+
+.lesson-look {
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid var(--cyan);
+  background: var(--bg-1);
+}
+
+.lesson-terms {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.lesson-terms dt {
+  display: inline;
+  color: var(--cyan);
+  font-family: var(--font-mono);
+}
+
+.lesson-terms dt::after {
+  content: ": ";
+}
+
+.lesson-terms dd {
+  display: inline;
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.caption-question {
+  color: var(--amber);
 }
 
 .step-nav {
@@ -984,31 +1077,24 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   gap: 0.5rem;
 }
 
-.step-dots {
+.stage-tabs {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.35rem;
   margin: 0 0.25rem;
   padding: 0;
   list-style: none;
 }
 
-.step-dot {
-  width: 0.9rem;
-  height: 0.9rem;
-  padding: 0;
-  border-radius: 50%;
-  border: 2px solid var(--cyan-dim);
-  background: transparent;
+.stage-tab {
+  min-width: 2.1rem;
+  padding: 0.3rem 0.5rem;
+  font-family: var(--font-mono);
 }
 
-.step-dot.is-done {
-  background: var(--cyan-dim);
-}
-
-.step-dot.is-current {
-  border-color: var(--cyan);
-  background: var(--cyan);
-  box-shadow: var(--glow-cyan);
+@media (min-width: 1400px) {
+  .lesson-columns {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
 }
 
 /* ---------- Drawer ---------- */
@@ -1023,7 +1109,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   align-content: start;
   gap: 1.25rem;
   width: min(34rem, 100vw);
-  padding: 1rem 1.25rem 2rem;
+  padding: 1rem 1.25rem 5rem;
   overflow-y: auto;
   background: var(--bg-1);
   border-left: 1px solid var(--cyan-dim);
@@ -1037,6 +1123,13 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   transform: none;
   visibility: visible;
   transition: transform 0.35s var(--ease), visibility 0s;
+}
+
+/* A transparent layer behind the drawer. Clicking it closes the drawer. */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
 }
 
 .drawer-head {
@@ -1118,6 +1211,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "ring"
+      "teach"
       "pipeline"
       "verify";
   }
@@ -1134,7 +1228,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 /* Below 700px everything is one column and the digest wraps to two rows of ten. */
 @media (max-width: 700px) {
   .app {
-    padding: 0.5rem;
+    padding: 0.5rem 0.5rem 4.5rem;
   }
 
   .digest-grid {

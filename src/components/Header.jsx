@@ -12,7 +12,10 @@ export default function Header({ drawerOpen, onToggleDrawer }) {
 
   return (
     <header className="topbar">
-      <h1 className="brand">TOTP Visualizer</h1>
+      <h1 className="brand">
+        <img className="brand-logo" src="/favicon.png" alt="" width="28" height="29" />
+        TOTP Visualizer
+      </h1>
       <div className="topbar-controls">
         <div className="segmented" role="group" aria-label="View">
           <button type="button" aria-pressed={state.viewMode === 'live'} onClick={() => dispatch({ type: 'view/set', mode: 'live' })}>
